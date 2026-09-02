@@ -1,0 +1,29 @@
+name: Build Envimo ROS 2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout automation repository
+        uses: actions/checkout@v4
+
+      - name: Checkout envimo401_bringup
+        uses: actions/checkout@v4
+        with:
+          repository: mohsenrahmanikivi/envimo401_bringup
+          path: ros2_ws/src/envimo401_bringup
+
+      - name: Checkout envimo401_chassis
+        uses: actions/checkout@v4
+        with:
+          repository: mohsenrahmanikivi/envimo401_chassis
+          path: ros2_ws/src/envimo401_chassis
+
+      - name: Show workspace
+        run: |
+          echo "ROS 2 workspace:"
+          find ros2_ws -maxdepth 3 -type f | sort
