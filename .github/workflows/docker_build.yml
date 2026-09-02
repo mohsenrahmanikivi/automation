@@ -9,16 +9,16 @@ jobs:
 
     steps:
       - name: Checkout automation repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Checkout envimo401_bringup
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: mohsenrahmanikivi/envimo401_bringup
           path: ros2_ws/src/envimo401_bringup
 
       - name: Checkout envimo401_chassis
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: mohsenrahmanikivi/envimo401_chassis
           path: ros2_ws/src/envimo401_chassis
