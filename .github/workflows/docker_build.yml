@@ -39,10 +39,10 @@ jobs:
           path: chassis_source
 
       # --------------------------------------------------
-      # 4. Assemble chassis ROS packages
+      # 4. Relocated the packages
       # --------------------------------------------------
 
-      - name: Assemble chassis ROS workspace
+      - name: Relocated the packages
         run: |
           set -e
 
@@ -87,3 +87,37 @@ jobs:
 
           echo ""
           echo "Validation successful."
+     
+      # --------------------------------------------------
+      # 6. Enable ARM64 emulation
+      # --------------------------------------------------
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      # --------------------------------------------------
+      # 7. Set up Docker Buildx
+      # --------------------------------------------------
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # --------------------------------------------------
+        # 8. Build ARM64 Docker image
+      # --------------------------------------------------
+      
+      - name: Build Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          tags: envimo-robot:test
+          load: true
+
+      # --------------------------------------------------
+      # 9. Show the image
+      # --------------------------------------------------
+      
+      - name: Check Docker image
+        run: docker images
