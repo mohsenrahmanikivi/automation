@@ -8,22 +8,82 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # --------------------------------------------------
+      # 1. Checkout automation repository
+      # --------------------------------------------------
+
       - name: Checkout automation repository
         uses: actions/checkout@v5
+
+      # --------------------------------------------------
+      # 2. Checkout bringup repository
+      # --------------------------------------------------
 
       - name: Checkout envimo401_bringup
         uses: actions/checkout@v5
         with:
           repository: mohsenrahmanikivi/envimo401_bringup
+          ref: devel
           path: ros2_ws/src/envimo401_bringup
+
+      # --------------------------------------------------
+      # 3. Checkout chassis repository temporarily
+      # --------------------------------------------------
 
       - name: Checkout envimo401_chassis
         uses: actions/checkout@v5
         with:
           repository: mohsenrahmanikivi/envimo401_chassis
-          path: ros2_ws/src/envimo401_chassis
+          ref: devel
+          path: chassis_source
 
-      - name: Show workspace
+      # --------------------------------------------------
+      # 4. Assemble chassis ROS packages
+      # --------------------------------------------------
+
+      - name: Assemble chassis ROS workspace
         run: |
-          echo "ROS 2 workspace:"
+          set -e
+
+          mkdir -p ros2_ws/src
+
+          cp -r chassis_source/ROS2/src/chassis_enable \
+                ros2_ws/src/
+
+          cp -r chassis_source/ROS2/src/segway_msgs \
+                ros2_ws/src/
+
+          cp -r chassis_source/ROS2/src/segwayrmp \
+                ros2_ws/src/
+
+          mkdir -p ros2_ws/LibAPI
+
+          cp -r chassis_source/LibAPI/lib \
+                ros2_ws/LibAPI/
+
+      # --------------------------------------------------
+      # 5. Validate workspace structure
+      # --------------------------------------------------
+
+      - name: Validate ROS workspace
+        run: |
+          set -e
+
+          echo "Checking required ROS packages..."
+
+          test -f ros2_ws/src/envimo401_bringup/package.xml
+          test -f ros2_ws/src/chassis_enable/package.xml
+          test -f ros2_ws/src/segway_msgs/package.xml
+          test -f ros2_ws/src/segwayrmp/package.xml
+
+          echo "Checking ARM64 Segway library..."
+
+          test -f ros2_ws/LibAPI/lib/libctrl_arm64-v8a.so
+
+          echo ""
+          echo "Workspace structure:"
           find ros2_ws -maxdepth 3 -type f | sort
+
+          echo ""
+          echo "Validation successful."
