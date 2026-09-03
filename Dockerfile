@@ -14,8 +14,8 @@ COPY ros2_ws/LibAPI ./LibAPI
 ENV LD_LIBRARY_PATH=/ros2_ws/LibAPI/lib:${LD_LIBRARY_PATH}
 
 # Basic build and dependency tools
-RUN apt-get update && \
-    apt-get install -y \
+RUN apt update && \
+    apt install -y \
         python3-rosdep \
         python3-colcon-common-extensions && \
     rm -rf /var/lib/apt/lists/*
@@ -30,7 +30,8 @@ RUN source /opt/ros/jazzy/setup.bash && \
         --from-paths src \
         --ignore-src \
         -r \
-        -y
+        -y \
+        --as-root=apt:false 
 
 # Build the complete workspace
 RUN source /opt/ros/jazzy/setup.bash && \
