@@ -1,1 +1,0 @@
-This is an automation repository of the project.
