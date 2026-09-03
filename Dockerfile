@@ -11,11 +11,11 @@ COPY ros2_ws/src ./src
 COPY ros2_ws/LibAPI ./LibAPI
 
 # Library environment variables
-ENV LD_LIBRARY_PATH=/ros2_ws/LibAPI/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/opt/ros/jazzy/lib:/ros2_ws/LibAPI/lib
 
 # Basic build and dependency tools
-RUN apt update && \
-    apt install -y \
+RUN apt-get update && \
+    apt-get install -y \
         python3-rosdep \
         python3-colcon-common-extensions && \
     rm -rf /var/lib/apt/lists/*
@@ -23,6 +23,15 @@ RUN apt update && \
 # Initialize rosdep
 RUN rosdep init 2>/dev/null || true
 RUN rosdep update
+
+# DEBUG: Check ROS Jazzy packages
+RUN apt-get update && \
+    echo "=== NAV2 ===" && \
+    apt-cache policy ros-jazzy-nav2-bringup && \
+    echo "=== SLAM TOOLBOX ===" && \
+    apt-cache policy ros-jazzy-slam-toolbox && \
+    echo "=== REALSENSE ===" && \
+    apt-cache policy ros-jazzy-realsense2-camera
 
 # Install dependencies declared by the ROS packages
 RUN source /opt/ros/jazzy/setup.bash && \
